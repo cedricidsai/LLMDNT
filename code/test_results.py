@@ -5,7 +5,7 @@ import signal
 
 from collections import defaultdict 
 
-path = "/Users/cedricmesnage/Backed_up/Projects/artificialscientist/"
+path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)) + '/'
 
 storage_dir = ''
 
