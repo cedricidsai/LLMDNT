@@ -9,7 +9,7 @@ openai.api_key = "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"
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # Something else to try is to give the examples iteratively
 
-storage_dir = "../results/chain_of_thought"
+storage_dir = "chain_of_thought"
 
 storage_path = "../results/"
 
