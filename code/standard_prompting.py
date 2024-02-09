@@ -9,9 +9,11 @@ openai.api_key = "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"
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # Something else to try is to give the examples iteratively
 
-storage_dir = "standard_prompting"
+storage_dir = "standard_prompting_10"
 
 storage_path = "../results/"
+
+n_choices = 10
 
 def read_dataset():
     dirs = os.listdir(path + "1D-ARC/dataset")
@@ -75,7 +77,7 @@ def generate_code(data, failed_code, temperature=0.5):
     userprompt = generate_prompt(data)
 
     messages = [{"role": "system", "content": systemprompt}, {"role": "user", "content": userprompt}]
-    chat_completion = openai.ChatCompletion.create(model="gpt-4", messages=messages, n=5, temperature=temperature)
+    chat_completion = openai.ChatCompletion.create(model="gpt-4", messages=messages, n=n_choices, temperature=temperature)
     response = chat_completion['choices'][0]['message']['content']
     messages += [{"role": "assistant", "content": response}]
     return(response, messages, chat_completion)

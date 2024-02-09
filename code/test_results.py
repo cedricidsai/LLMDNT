@@ -11,6 +11,8 @@ storage_dir = ''
 
 storage_path = '../results/'
 
+n_choices = 1
+
 def read_dataset():
     dirs = os.listdir(path + "1D-ARC/dataset")
     file_paths = []
@@ -40,7 +42,7 @@ def execute_verify(response, inputs, outputs):
     # print(response["problem"])
     failed_code = []
     n_choice = 0 
-    for choice in response["choices"]:
+    for choice in response["choices"][:n_choices]:
         n_choice += 1
         code = choice['message']['content']
         code = "\n".join([line for line in code.split('\n') if ((line.startswith('def') or line.startswith('    ') or line.startswith('  ')) and (not line.startswith('     -')))])
@@ -57,8 +59,8 @@ def execute_verify(response, inputs, outputs):
             # print(code)
             # print(len(inputs))
 
-            # print(response["problem"], n_choice)
-            if (storage_dir, response["problem"], n_choice) not in [('standard_prompting', '1d_fill_39',3)]:
+            print("('%s','%s',%i)"%(storage_dir, response["problem"], n_choice))
+            if (storage_dir, response["problem"], n_choice) not in [('standard_prompting', '1d_fill_39',3), ('chain_of_thought','1d_pcopy_mc_28',5)]:
                 transformed = [scope['transform'](sequence) for sequence in inputs]
                 if transformed == outputs:
                     return(True, code)
@@ -135,8 +137,9 @@ if __name__ == "__main__":
                             n_passed += 1
                             categories_passed[category] += 1
                             break
+            print(n, n_passed)
 
-
+    signal.alarm(0)
     import pandas as pd
     data = pd.DataFrame(categories_passed, index = [storage_dir]).to_csv(storage_path + storage_dir + '.csv')
 
