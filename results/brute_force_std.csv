@@ -1,0 +1,2 @@
+,1d_move_dp,1d_flip,1d_move_2p,1d_move_1p,1d_scale_dp,1d_fill,1d_hollow,1d_denoising_mc,1d_move_3p,1d_padded_fill,1d_move_2p_dp,1d_denoising_1c
+brute_force,20,50,50,50,51,50,50,50,50,50,21,50
