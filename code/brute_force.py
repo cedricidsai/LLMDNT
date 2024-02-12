@@ -59,7 +59,7 @@ def execute_verify(response, inputs, outputs):
             # print(code)
             # print(len(inputs))
 
-            # print("('%s','%s',%i)"%(storage_dir, response["problem"], n_choice))
+            print("('%s','%s',%i)"%(storage_dir, response["problem"], n_choice))
             if (storage_dir, response["problem"], n_choice) not in [('standard_prompting', '1d_fill_39',3), ('chain_of_thought','1d_pcopy_mc_28',5), ('brute_force','1d_fill_39',3), ('brute_force','1d_pcopy_mc_28',5)]:
                 transformed = [scope['transform'](sequence) for sequence in inputs]
                 if transformed == outputs:
@@ -122,7 +122,7 @@ if __name__ == "__main__":
             iteration = 0
             max_iterations = 1
             # dataset = [ for dataset in ['standard_prompting', 'chain_of_thought', 'direct_feedback']]
-            dataset = 'standard_prompting' #'standard_prompting'
+            dataset = 'chain_of_thought' #'standard_prompting'
             for response_file in os.listdir(storage_path + dataset + '/'):
                 signal.alarm(0)
                 response = json.load(open(storage_path + dataset + '/{}'.format(response_file)))

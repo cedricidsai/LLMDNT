@@ -110,6 +110,10 @@ if __name__ == "__main__":
     categories_passed = defaultdict(int)
     n = 0
     # print(read_dataset())
+
+    input_tokens = 0
+    output_tokens = 0
+
     for (category, files) in read_dataset():
         for file in files:
             categories_seen[category] += 1
@@ -143,17 +147,17 @@ if __name__ == "__main__":
     import pandas as pd
     data = pd.DataFrame(categories_passed, index = [storage_dir]).to_csv(storage_path + storage_dir + '.csv')
 
-    categories_names = "Move 1,Move 2,Move 3,Move Dynamic,Move 2 Towards,Fill,Padded Fill,Hollow,Flip,Mirror,Denoise,Denoise Multicolor,Pattern Copy,Pattern Copy Multicolor,Recolor by Odd Even,Recolor by Size,Recolor by Size Comparison,Scaling".split(',')
-    categories_dirs = "1d_move_1p,1d_move_2p,1d_move_3p,1d_move_dp,1d_move_2p_dp,1d_fill,1d_padded_fill,1d_hollow,1d_flip,1d_mirror,1d_denoising_1c,1d_denoising_mc,1d_pcopy_1c,1d_pcopy_mc,1d_recolor_oe,1d_recolor_cnt,1d_recolor_cmp,1d_scale_dp".split(',')
+    # categories_names = "Move 1,Move 2,Move 3,Move Dynamic,Move 2 Towards,Fill,Padded Fill,Hollow,Flip,Mirror,Denoise,Denoise Multicolor,Pattern Copy,Pattern Copy Multicolor,Recolor by Odd Even,Recolor by Size,Recolor by Size Comparison,Scaling".split(',')
+    # categories_dirs = "1d_move_1p,1d_move_2p,1d_move_3p,1d_move_dp,1d_move_2p_dp,1d_fill,1d_padded_fill,1d_hollow,1d_flip,1d_mirror,1d_denoising_1c,1d_denoising_mc,1d_pcopy_1c,1d_pcopy_mc,1d_recolor_oe,1d_recolor_cnt,1d_recolor_cmp,1d_scale_dp".split(',')
 
-    print(categories_passed)
-    print(categories_seen)
-    print(n, n_passed)
-    print()
+    # print(categories_passed)
+    # print(categories_seen)
+    # print(n, n_passed)
+    # print()
 
-    print("\\begin{tabular}{|l|c|c|}")
-    print("\hline")
-    print("Task category name & solved & tested \\\\ \hline")
-    for i, category in enumerate(categories_dirs):
-        print(categories_names[i], '&', categories_passed[category], '&', categories_seen[category], "\\\\ \hline")
-    print("\\end{tabular}")    
+    # print("\\begin{tabular}{|l|c|c|}")
+    # print("\hline")
+    # print("Task category name & solved & tested \\\\ \hline")
+    # for i, category in enumerate(categories_dirs):
+    #     print(categories_names[i], '&', categories_passed[category], '&', categories_seen[category], "\\\\ \hline")
+    # print("\\end{tabular}")    
