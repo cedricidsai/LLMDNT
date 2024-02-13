@@ -11,7 +11,7 @@ storage_dir = ''
 
 storage_path = '../results/'
 
-n_choices = 1
+n_choices = 5
 
 def read_dataset():
     dirs = os.listdir(path + "1D-ARC/dataset")
@@ -35,7 +35,7 @@ def generate_code(data, failed_code, temperature=0.5):
     return(response, messages, chat_completion)
 
 def handler(signum, frame):
-    print("infinite loop")
+    # print("infinite loop")
     raise Exception("timeout")
 
 def execute_verify(response, inputs, outputs):
@@ -60,7 +60,7 @@ def execute_verify(response, inputs, outputs):
             # print(len(inputs))
 
             print("('%s','%s',%i)"%(storage_dir, response["problem"], n_choice))
-            if (storage_dir, response["problem"], n_choice) not in [('standard_prompting', '1d_fill_39',3), ('chain_of_thought','1d_pcopy_mc_28',5)]:
+            if (storage_dir, response["problem"], n_choice) not in [('standard_prompting', '1d_fill_39',3), ('chain_of_thought','1d_pcopy_mc_28',5), ('brute_force','1d_fill_39',3), ('brute_force','1d_pcopy_mc_28',5)]:
                 transformed = [scope['transform'](sequence) for sequence in inputs]
                 if transformed == outputs:
                     return(True, code)
@@ -101,19 +101,16 @@ def print_problem(problem, data):
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) < 2:
+    if len(sys.argv) != 1:
         exit()
-    storage_dir = sys.argv[1]
+    storage_dir = 'brute_force' # sys.argv[1]
+
     print("testing : ", storage_dir)
     n_passed = 0
     categories_seen = defaultdict(int)
     categories_passed = defaultdict(int)
     n = 0
     # print(read_dataset())
-
-    input_tokens = 0
-    output_tokens = 0
-
     for (category, files) in read_dataset():
         for file in files:
             categories_seen[category] += 1
@@ -124,40 +121,42 @@ if __name__ == "__main__":
             passed = False
             iteration = 0
             max_iterations = 1
-            for response_file in os.listdir(storage_path + storage_dir + '/'):
+            # dataset = [ for dataset in ['standard_prompting', 'chain_of_thought', 'direct_feedback']]
+            dataset = 'chain_of_thought' #'standard_prompting'
+            for response_file in os.listdir(storage_path + dataset + '/'):
                 signal.alarm(0)
-                response = json.load(open(storage_path + storage_dir + '/{}'.format(response_file)))
+                response = json.load(open(storage_path + dataset + '/{}'.format(response_file)))
 
-                if response['problem'] == problem:
-                    valid, code = verify_response(response,  data["train"])
-                    iteration += 1
-                    if valid:
-                        # print('# code validates examples')
-                        # print(code)
-                        test, code = verify_response(response,  data["test"])
-                        if test:
-                            # print("# code passes test")
-                            passed = True
-                            n_passed += 1
-                            categories_passed[category] += 1
-                            break
+                # if response['problem'] == problem:
+                valid, code = verify_response(response,  data["train"])
+                iteration += 1
+                if valid:
+                    # print('# code validates examples')
+                    # print(code)
+                    test, code = verify_response(response,  data["test"])
+                    if test:
+                        # print("# code passes test")
+                        passed = True
+                        n_passed += 1
+                        categories_passed[category] += 1
+                        break
             print(n, n_passed)
 
     signal.alarm(0)
     import pandas as pd
     data = pd.DataFrame(categories_passed, index = [storage_dir]).to_csv(storage_path + storage_dir + '.csv')
 
-    # categories_names = "Move 1,Move 2,Move 3,Move Dynamic,Move 2 Towards,Fill,Padded Fill,Hollow,Flip,Mirror,Denoise,Denoise Multicolor,Pattern Copy,Pattern Copy Multicolor,Recolor by Odd Even,Recolor by Size,Recolor by Size Comparison,Scaling".split(',')
-    # categories_dirs = "1d_move_1p,1d_move_2p,1d_move_3p,1d_move_dp,1d_move_2p_dp,1d_fill,1d_padded_fill,1d_hollow,1d_flip,1d_mirror,1d_denoising_1c,1d_denoising_mc,1d_pcopy_1c,1d_pcopy_mc,1d_recolor_oe,1d_recolor_cnt,1d_recolor_cmp,1d_scale_dp".split(',')
+    categories_names = "Move 1,Move 2,Move 3,Move Dynamic,Move 2 Towards,Fill,Padded Fill,Hollow,Flip,Mirror,Denoise,Denoise Multicolor,Pattern Copy,Pattern Copy Multicolor,Recolor by Odd Even,Recolor by Size,Recolor by Size Comparison,Scaling".split(',')
+    categories_dirs = "1d_move_1p,1d_move_2p,1d_move_3p,1d_move_dp,1d_move_2p_dp,1d_fill,1d_padded_fill,1d_hollow,1d_flip,1d_mirror,1d_denoising_1c,1d_denoising_mc,1d_pcopy_1c,1d_pcopy_mc,1d_recolor_oe,1d_recolor_cnt,1d_recolor_cmp,1d_scale_dp".split(',')
 
-    # print(categories_passed)
-    # print(categories_seen)
-    # print(n, n_passed)
-    # print()
+    print(categories_passed)
+    print(categories_seen)
+    print(n, n_passed)
+    print()
 
-    # print("\\begin{tabular}{|l|c|c|}")
-    # print("\hline")
-    # print("Task category name & solved & tested \\\\ \hline")
-    # for i, category in enumerate(categories_dirs):
-    #     print(categories_names[i], '&', categories_passed[category], '&', categories_seen[category], "\\\\ \hline")
-    # print("\\end{tabular}")    
+    print("\\begin{tabular}{|l|c|c|}")
+    print("\hline")
+    print("Task category name & solved & tested \\\\ \hline")
+    for i, category in enumerate(categories_dirs):
+        print(categories_names[i], '&', categories_passed[category], '&', categories_seen[category], "\\\\ \hline")
+    print("\\end{tabular}")    
