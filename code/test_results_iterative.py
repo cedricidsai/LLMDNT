@@ -131,33 +131,34 @@ if __name__ == "__main__":
                 problem = file.split('.')[0].split('/')[-1]
                 # print_problem(problem, data)
                 passed = False
-                iteration = 0
-                max_iterations = 1
+                iterations = []
                 for response_file in os.listdir(storage_path + storage_dir + '/'):
                     signal.alarm(0)
                     response = json.load(open(storage_path + storage_dir + '/{}'.format(response_file)))
 
                     if response['problem'] == problem:
-                        valid, code = verify_response(response,  data["train"])
-                        iteration += 1
-                        input_tokens += response["usage"]["prompt_tokens"]
-                        output_tokens += response["usage"]["completion_tokens"]
+                        iterations.append(response)
+                iterations = sorted(iterations, key=lambda k: k['created'], reverse=False)
+                for iteration in iterations[:current_choices]:
+                    valid, code = verify_response(iteration,  data["train"])
+                    input_tokens += iteration["usage"]["prompt_tokens"]
+                    output_tokens += iteration["usage"]["completion_tokens"]
 
-                        if valid:
-                            # print('# code validates examples')
-                            # print(code)
-                            test, code = verify_response(response,  data["test"])
-                            if test:
-                                # print("# code passes test")
-                                passed = True
-                                n_passed += 1
-                                categories_passed[category] += 1
-                                break
+                    if valid:
+                        # print('# code validates examples')
+                        # print(code)
+                        test, code = verify_response(iteration,  data["test"])
+                        if test:
+                            # print("# code passes test")
+                            passed = True
+                            n_passed += 1
+                            categories_passed[category] += 1
+                            break
                 print(n, n_passed)
 
         signal.alarm(0)
 
-        output_tokens = current_choices * output_tokens / max_choices
+        # output_tokens = current_choices * output_tokens / max_choices
         data = pd.DataFrame(categories_passed, index = [storage_dir])
         data = data.assign(choices = [current_choices])
         data = data.assign(input_tokens = [input_tokens])

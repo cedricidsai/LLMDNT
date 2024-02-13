@@ -1,2 +1,11 @@
-,1d_move_dp,1d_flip,1d_move_1p,1d_fill,1d_hollow,1d_denoising_mc,1d_move_3p,1d_denoising_1c
-standard_prompting,1,3,2,10,7,2,4,1
+,1d_move_dp,1d_flip,1d_move_2p,1d_move_1p,1d_scale_dp,1d_fill,1d_hollow,1d_denoising_mc,1d_move_3p,choices,input_tokens,output_tokens,1d_denoising_1c,1d_padded_fill,1d_move_2p_dp
+standard_prompting,2,5,2,7,1,5,6,1,2,1,129607,50766.7,,,
+standard_prompting,2,7,4,11,2,13,10,1,8,2,129607,101533.4,4.0,,
+standard_prompting,2,9,4,13,4,19,14,1,12,3,129607,152300.1,4.0,,
+standard_prompting,3,13,5,14,6,22,18,4,13,4,129607,203066.8,5.0,,
+standard_prompting,4,19,5,17,6,22,22,5,13,5,129607,253833.5,5.0,,
+standard_prompting,4,21,5,19,7,24,26,6,14,6,129607,304600.2,5.0,1.0,1.0
+standard_prompting,4,22,5,20,7,26,29,8,16,7,129607,355366.9,6.0,1.0,1.0
+standard_prompting,6,24,7,21,7,27,30,10,18,8,129607,406133.6,6.0,1.0,2.0
+standard_prompting,6,24,8,21,7,28,30,12,18,9,129607,456900.3,6.0,1.0,2.0
+standard_prompting,6,27,9,25,7,30,32,13,18,10,129607,507667.0,7.0,1.0,3.0

@@ -1,0 +1,2 @@
+,1d_move_dp,1d_flip,1d_move_2p,1d_move_1p,1d_scale_dp,1d_fill,1d_hollow,1d_denoising_mc,1d_move_3p,1d_padded_fill,1d_move_2p_dp,1d_denoising_1c,input_tokens,output_tokens
+standard_prompting_10,6,27,9,25,7,30,32,13,18,1,3,7,129607,507667
