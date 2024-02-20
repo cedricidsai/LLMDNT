@@ -11,7 +11,10 @@ openai.api_key = "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"
 
 storage_dir = "chain_of_thought"
 
-storage_path = "../results/"
+# model_name = "gpt-4"
+model_name = "gpt-3.5-turbo"
+
+storage_path = "../results/" + model_name + '/'
 
 def read_dataset():
     dirs = os.listdir(path + "1D-ARC/dataset")
@@ -78,7 +81,7 @@ def generate_code(data, failed_code, temperature=0.5, chain_of_thought = False):
     userprompt = generate_prompt(data)
 
     messages = [{"role": "system", "content": systemprompt}, {"role": "user", "content": userprompt}]
-    chat_completion = openai.ChatCompletion.create(model="gpt-4", messages=messages, n=5, temperature=temperature)
+    chat_completion = openai.ChatCompletion.create(model=model_name, messages=messages, n=5, temperature=temperature)
     response = chat_completion['choices'][0]['message']['content']
     messages += [{"role": "assistant", "content": response}]
     return(response, messages, chat_completion)

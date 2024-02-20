@@ -11,7 +11,10 @@ openai.api_key = "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"
 
 storage_dir = "standard_prompting_10"
 
-storage_path = "../results/"
+# model_name = "gpt-4"
+model_name = "gpt-3.5-turbo"
+
+storage_path = "../results/" + model_name + '/'
 
 n_choices = 10
 

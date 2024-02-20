@@ -11,7 +11,12 @@ openai.api_key = "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"
 
 storage_dir = "direct_feedback"
 
-storage_path = "../results/"
+# model_name = "gpt-4"
+model_name = "gpt-3.5-turbo"
+
+storage_path = "../results/" + model_name + '/'
+
+n_choices = 1
 
 def read_dataset():
     dirs = os.listdir(path + "1D-ARC/dataset")
@@ -75,7 +80,7 @@ def generate_code(data, failed_code, temperature=0.5):
     userprompt = generate_prompt(data)
 
     messages = [{"role": "system", "content": systemprompt}, {"role": "user", "content": userprompt}]
-    chat_completion = openai.ChatCompletion.create(model="gpt-4", messages=messages, n=1, temperature=temperature)
+    chat_completion = openai.ChatCompletion.create(model="gpt-4", messages=messages, n=n_choices, temperature=temperature)
     response = chat_completion['choices'][0]['message']['content']
     messages += [{"role": "assistant", "content": response}]
     return(response, messages, chat_completion)
@@ -88,7 +93,7 @@ def execute_verify(response, inputs, outputs):
     print(response["problem"])
     failed_code = []
     n_choice = 0 
-    for choice in response["choices"]:
+    for choice in response["choices"][:n_choices]:
         n_choice += 1
         code = choice['message']['content']
         code = "\n".join([line for line in code.split('\n') if (line.startswith('def') or line.startswith('    ') or line.startswith('  '))])
