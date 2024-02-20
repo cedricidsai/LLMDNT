@@ -9,7 +9,7 @@ openai.api_key = "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"
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 # Something else to try is to give the examples iteratively
 
-storage_dir = "standard_prompting_10"
+storage_dir = "standard_prompting"
 
 # model_name = "gpt-4"
 model_name = "gpt-3.5-turbo"
