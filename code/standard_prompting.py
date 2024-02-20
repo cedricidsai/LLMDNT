@@ -80,7 +80,7 @@ def generate_code(data, failed_code, temperature=0.5):
     userprompt = generate_prompt(data)
 
     messages = [{"role": "system", "content": systemprompt}, {"role": "user", "content": userprompt}]
-    chat_completion = openai.ChatCompletion.create(model="gpt-4", messages=messages, n=n_choices, temperature=temperature)
+    chat_completion = openai.ChatCompletion.create(model=model_name, messages=messages, n=n_choices, temperature=temperature)
     response = chat_completion['choices'][0]['message']['content']
     messages += [{"role": "assistant", "content": response}]
     return(response, messages, chat_completion)
