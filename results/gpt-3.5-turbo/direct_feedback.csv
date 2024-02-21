@@ -1,0 +1,6 @@
+,1d_hollow,1d_move_3p,choices,input_tokens,output_tokens,1d_move_1p
+direct_feedback,1,2,1,129964,45080,
+direct_feedback,1,2,2,308737,88221,1.0
+direct_feedback,2,2,3,528124,132960,2.0
+direct_feedback,2,2,4,789198,177407,2.0
+direct_feedback,2,3,5,1092075,223007,2.0

@@ -1,0 +1,6 @@
+,1d_move_dp,1d_move_1p,1d_fill,1d_hollow,choices,input_tokens,output_tokens,1d_flip,1d_move_2p,1d_move_3p,1d_denoising_1c,1d_denoising_mc,1d_move_2p_dp
+chain_of_thought,1,3,1,1,1,143122,165003.4,,,,,,
+chain_of_thought,1,5,2,2,2,143122,330006.8,1.0,1.0,1.0,1.0,,
+chain_of_thought,1,6,2,3,3,143122,495010.2,1.0,1.0,1.0,1.0,1.0,
+chain_of_thought,1,6,2,5,4,143122,660013.6,1.0,1.0,1.0,1.0,1.0,
+chain_of_thought,1,6,2,7,5,143122,825017.0,1.0,1.0,1.0,1.0,1.0,1.0
