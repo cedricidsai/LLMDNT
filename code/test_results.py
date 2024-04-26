@@ -10,12 +10,14 @@ path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 
 storage_dir = ''
 
-storage_path = '../results/'
+# model_name = "gpt-4"
+model_name = "gpt-3.5-turbo"
 
+storage_path = "../results/" + model_name + '/'
 
 max_choices = 5
 
-n_choices = 1
+n_choices = 5
 
 def read_dataset():
     dirs = os.listdir(path + "1D-ARC/dataset")
@@ -77,6 +79,7 @@ def execute_verify(response, inputs, outputs):
             pass
         else:
             # print("other exception")
+            # print(outputs, transformed)
             pass
             # print("failed loading")
         failed_code.append(code)

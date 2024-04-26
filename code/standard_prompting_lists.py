@@ -5,17 +5,18 @@ import signal
 
 path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)) + '/'
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = "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"
+# openai.api_key = os.getenv("OPENAI_API_KEY")
 # Something else to try is to give the examples iteratively
 
-storage_dir = "chain_of_thought"
+storage_dir = "standard_prompting_lists"
 
 # model_name = "gpt-4"
 model_name = "gpt-3.5-turbo"
 
 storage_path = "../results/" + model_name + '/'
 
-n_choices = 5
+n_choices = 10
 
 def read_dataset():
     dirs = os.listdir(path + "1D-ARC/dataset")
@@ -25,7 +26,8 @@ def read_dataset():
     return(file_paths)
 
 def generate_example(example):
-    return("the original sequence \"{}\" is transformed into \"{}\"".format("".join([str(x) for x in example["input"][0]]), "".join([str(x) for x in example["output"][0]])))
+    # return("the original sequence \"{}\" is transformed into \"{}\"".format("".join([str(x) for x in example["input"][0]]), "".join([str(x) for x in example["output"][0]])))
+    return("the original sequence [{}] is transformed into [{}]".format(",".join([str(x) for x in example["input"][0]]), ",".join([str(x) for x in example["output"][0]])))
 
 def generate_prompt(data):
     prompt = []
@@ -70,11 +72,8 @@ def generate_prompt(data):
 #     print(test_truth)
 #     return(test_response == test_truth)
 
-def generate_code(data, failed_code, temperature=0.5, chain_of_thought = False):
-    if chain_of_thought:
-        systemprompt = "You are given the following sequences transitions and you are to find the pattern and write the code as a Python function \"transform(sequence)\" which transforms each original sequence into the transformed sequence. Do not comment on the code. Provide your reasoning step by step prior to giving the function. Precede every non code line with a #."
-    else:
-        systemprompt = "You are given the following sequences transitions and you are to find the pattern and write the code as a Python function \"transform(sequence)\" which transforms each original sequence into the transformed sequence. Respond with only the python function. Do not comment on the code."
+def generate_code(data, failed_code, temperature=0.5):
+    systemprompt = "You are given the following sequences transitions and you are to find the pattern and write the code as a Python function \"transform(sequence)\" which transforms each original sequence into the transformed sequence. Respond with only the python function. Do not comment on the code."
 
     if failed_code:
         systemprompt += "Knowing that these functions failed : \n{}.".format("\n".join(failed_code))
@@ -88,35 +87,45 @@ def generate_code(data, failed_code, temperature=0.5, chain_of_thought = False):
     return(response, messages, chat_completion)
 
 def handler(signum, frame):
-    # print("infinite loop")
+    print("infinite loop")
     raise Exception("timeout")
 
 def execute_verify(response, inputs, outputs):
+    print(response["problem"])
     failed_code = []
+    n_choice = 0 
     for choice in response["choices"]:
+        n_choice += 1
         code = choice['message']['content']
-        code = "\n".join([line for line in code.split('\n') if ((line.startswith('def ') or line.startswith('    ') or line.startswith('  ')) and (not line.startswith('     -')))])
+        code = "\n".join([line for line in code.split('\n') if (line.startswith('def') or line.startswith('    ') or line.startswith('  '))])
         # print(code)
         signal.signal(signal.SIGALRM, handler)
         signal.alarm(1)
+
         try:
             import re
             scope = {'re':re}
+            print(code)
             exec(code, scope)
+            print("loaded")
             # print(code)
-            transformed = [scope['transform'](sequence) for sequence in inputs]
+            # print(len(inputs))
+            print(response["problem"], n_choice)
+            if (response["problem"], n_choice) not in []:
+                transformed = [scope['transform'](sequence) for sequence in inputs]
+                if transformed == outputs:
+                    return(True, code)
             # print(inputs)
             # print(transformed)
             # print(outputs)
-            if transformed == outputs:
-                return(True, code)
             failed_code.append(code)
         except Exception as exc:
-            # print("code not running")
+            print("code not running")
             print(exc)
             pass
-        else:
-            pass
+        # else:
+        #     print("no exception")
+        #     pass
             # print("failed loading")
         signal.alarm(0)
     return(False, failed_code)
@@ -129,15 +138,19 @@ def save_message(problem, messages, response_message):
 
 
 def verify_response(response, examples):
-    test_sequences = ["".join([str(x) for x in example["input"][0]]) for example in examples]
-    test_truths = ["".join([str(x) for x in example["output"][0]]) for example in examples]
+    # test_sequences = ["".join([str(x) for x in example["input"][0]]) for example in examples]
+    # test_truths = ["".join([str(x) for x in example["output"][0]]) for example in examples]
+    test_sequences = [[int(x) for x in example["input"][0]] for example in examples]
+    test_truths = [[int(x) for x in example["output"][0]] for example in examples]
     valid, code = execute_verify(response, test_sequences, test_truths)
     return(valid, code)
 
 def print_problem(problem, data):
     print("# {}".format(problem))
-    test_sequences = ["".join([str(x) for x in example["input"][0]]) for example in data["train"]]
-    test_truths = ["".join([str(x) for x in example["output"][0]]) for example in data["train"]]
+    # test_sequences = ["".join([str(x) for x in example["input"][0]]) for example in data["train"]]
+    # test_truths = ["".join([str(x) for x in example["output"][0]]) for example in data["train"]]
+    test_sequences = [[int(x) for x in example["input"][0]] for example in data["train"]]
+    test_truths = [[int(x) for x in example["output"][0]] for example in data["train"]]
     print(' input  : ', test_sequences)
     print(' output : ', test_truths)
 
@@ -173,7 +186,7 @@ if __name__ == "__main__":
         signal.alarm(0)
         while(not passed and iteration < max_iterations):
             iteration += 1
-            rule, messages, response = generate_code(data, failed_code, temperature=1, chain_of_thought=True)
+            rule, messages, response = generate_code(data, failed_code, temperature=1)
             # print(messages)
             save_message(problem, messages, response)
             valid, code = verify_response(response,  data["train"])

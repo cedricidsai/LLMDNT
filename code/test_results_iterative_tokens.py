@@ -3,19 +3,18 @@ import json
 import openai 
 import signal
 import pandas as pd
-
+import tiktoken
 from collections import defaultdict 
 
 path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)) + '/'
 
 storage_dir = ''
 
-# model_name = "gpt-4"
-model_name = "gpt-3.5-turbo"
+storage_path = '../results/'
 
-storage_path = "../results/" + model_name + '/'
+token_encoding = tiktoken.encoding_for_model('gpt-4')
 
-max_choices = 5
+max_choices = 10
 
 n_choices = 1
 
@@ -144,7 +143,8 @@ if __name__ == "__main__":
                 for iteration in iterations[:current_choices]:
                     valid, code = verify_response(iteration,  data["train"])
                     input_tokens += iteration["usage"]["prompt_tokens"]
-                    output_tokens += iteration["usage"]["completion_tokens"]
+                    # output_tokens += iteration["usage"]["completion_tokens"]
+                    output_tokens += sum([len(token_encoding.encode(choice["message"]["content"])) for choice in response["choices"][:n_choices]]) # response["usage"]["completion_tokens"]
 
                     if valid:
                         # print('# code validates examples')
@@ -167,7 +167,7 @@ if __name__ == "__main__":
         data = data.assign(output_tokens = [output_tokens])
         saved_data = pd.concat([saved_data, data])
 
-    saved_data.to_csv(storage_path + storage_dir + '.csv')
+    saved_data.to_csv(storage_path + storage_dir + '_tokens.csv')
 
     # categories_names = "Move 1,Move 2,Move 3,Move Dynamic,Move 2 Towards,Fill,Padded Fill,Hollow,Flip,Mirror,Denoise,Denoise Multicolor,Pattern Copy,Pattern Copy Multicolor,Recolor by Odd Even,Recolor by Size,Recolor by Size Comparison,Scaling".split(',')
     # categories_dirs = "1d_move_1p,1d_move_2p,1d_move_3p,1d_move_dp,1d_move_2p_dp,1d_fill,1d_padded_fill,1d_hollow,1d_flip,1d_mirror,1d_denoising_1c,1d_denoising_mc,1d_pcopy_1c,1d_pcopy_mc,1d_recolor_oe,1d_recolor_cnt,1d_recolor_cmp,1d_scale_dp".split(',')
