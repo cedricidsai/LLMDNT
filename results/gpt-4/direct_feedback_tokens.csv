@@ -1,0 +1,6 @@
+,1d_move_dp,1d_flip,1d_move_2p,1d_move_1p,1d_scale_dp,1d_fill,1d_hollow,1d_denoising_mc,1d_move_3p,1d_move_2p_dp,1d_denoising_1c,choices,input_tokens,output_tokens
+direct_feedback,1,5,1,5,1,9,10,3,4,1,1,1,129607,76585
+direct_feedback,1,8,2,10,4,13,15,4,5,1,1,2,309496,149685
+direct_feedback,1,9,4,13,4,15,20,5,5,2,2,3,541517,220830
+direct_feedback,3,11,4,14,4,15,23,6,6,3,4,4,828076,290615
+direct_feedback,3,11,4,17,7,16,23,6,6,3,5,5,1168956,359295

@@ -1,0 +1,6 @@
+,1d_move_dp,1d_flip,1d_move_2p,1d_move_1p,1d_scale_dp,1d_fill,1d_hollow,1d_denoising_mc,1d_move_3p,1d_padded_fill,1d_recolor_cnt,1d_move_2p_dp,1d_denoising_1c,choices,input_tokens,output_tokens,1d_recolor_cmp
+chain_of_thought,2,9,5,7,4,5,16,15,6,1,1,1,5,1,143122,452302,
+chain_of_thought,2,11,15,10,4,11,25,21,8,1,2,2,8,2,143122,642413,
+chain_of_thought,2,20,17,12,7,14,28,24,10,1,2,3,12,3,143122,957763,1.0
+chain_of_thought,4,21,22,14,10,17,37,31,15,1,2,3,13,4,143122,1243380,1.0
+chain_of_thought,6,24,27,18,12,23,39,34,19,1,2,4,16,5,143122,1569542,1.0
