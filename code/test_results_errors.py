@@ -184,7 +184,7 @@ if __name__ == "__main__":
                             #     categories_passed[category] += 1
                             # break
                         
-                        any_choice_passed_test_and_examples = sum([ examples_passed[j] == len(data["train"]) and test_passed[j] for j in range(1, len(test_passed)+1 )])
+                        any_choice_passed_test_and_examples = sum([ examples_passed[j] == len(data["train"]) and test_passed[j] for j in range(1, n_choices + 1 )])
 
                         if any_choice_passed_test_and_examples:
                             code_metrics['# tasks passed'] += 1
