@@ -26,7 +26,7 @@ model_name = "gpt-4"
 
 storage_path = "../results/" + model_name + '/'
 
-max_choices = 10
+max_choices = 5
 
 global n_choices
 
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     storage_dir = sys.argv[1]
     print("testing : ", storage_dir)
 
-    saved_data = pd.DataFrame()
+    saved_data = []
 
     for current_choices in range(1, max_choices+1):
         n_choices = current_choices
@@ -194,8 +194,7 @@ if __name__ == "__main__":
         # code_metrics['# solved'] = len(solved_tasks)
 
         code_metrics['# choices'] = n_choices
-        data = pd.DataFrame(code_metrics)
-        saved_data = pd.concat([saved_data, data])
+        saved_data.append(code_metrics)
 
         # print(n_choices, code_metrics)
         # print(categories_passed)
@@ -214,7 +213,9 @@ if __name__ == "__main__":
         # data = data.assign(output_tokens = [output_tokens])
         # saved_data = pd.concat([saved_data, data])
     print(saved_data)
-    saved_data.to_csv(storage_path + storage_dir + '_errors' + '.csv')
+    import json
+    json.dump(saved_data, open(storage_path + storage_dir + '_errors' + '.csv', 'w'))
+    # saved_data.to_csv(storage_path + storage_dir + '_errors' + '.csv')
 
     # categories_names = "Move 1,Move 2,Move 3,Move Dynamic,Move 2 Towards,Fill,Padded Fill,Hollow,Flip,Mirror,Denoise,Denoise Multicolor,Pattern Copy,Pattern Copy Multicolor,Recolor by Odd Even,Recolor by Size,Recolor by Size Comparison,Scaling".split(',')
     # categories_dirs = "1d_move_1p,1d_move_2p,1d_move_3p,1d_move_dp,1d_move_2p_dp,1d_fill,1d_padded_fill,1d_hollow,1d_flip,1d_mirror,1d_denoising_1c,1d_denoising_mc,1d_pcopy_1c,1d_pcopy_mc,1d_recolor_oe,1d_recolor_cnt,1d_recolor_cmp,1d_scale_dp".split(',')
