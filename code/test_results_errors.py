@@ -15,6 +15,10 @@ global code_metrics
 
 code_metrics = defaultdict(int)
 
+global solved_tasks
+
+solved_tasks = set()
+
 storage_dir = ''
 
 model_name = "gpt-4"
@@ -22,11 +26,11 @@ model_name = "gpt-4"
 
 storage_path = "../results/" + model_name + '/'
 
-max_choices = 5
+max_choices = 10
 
 global n_choices
 
-n_choices = 5
+n_choices = 1
 
 def read_dataset():
     dirs = os.listdir(path + "1D-ARC/dataset")
@@ -44,7 +48,7 @@ def execute_verify(response, inputs, outputs):
     # print(response["problem"])
     failed_code = []
     n_choice = 0 
-    verified = 0
+    verified = defaultdict(int)
     for choice in response["choices"][:n_choices]:
         n_choice += 1
         code = choice['message']['content']
@@ -58,13 +62,14 @@ def execute_verify(response, inputs, outputs):
                 scope = {'re':re}
                 # print(code)
                 loaded = False
+                code_metrics['# processed'] += 1
                 try:
                     exec(code, scope)
                     loaded = True
                 except Exception as load:
-                    code_metrics[type(load)] += 1
+                    code_metrics['# not loaded with error : ' + str(type(load))] += 1
                 else:
-                    code_metrics['# loaded'] += 1
+                    code_metrics['# functions loaded'] += 1
 
                 # print("loaded")
                 # print(code)
@@ -85,17 +90,18 @@ def execute_verify(response, inputs, outputs):
                         signal.alarm(0)
                         # transformed = []
                         if transformed == outputs[i]:
-                            verified += 1
+                            verified[n_choice] += 1
+                            solved_tasks.add(response["problem"])
                             # return(verified, code)
                         
                     except Exception as exc:
                         # print("code not running")
-                        code_metrics[type(exc)] += 1
+                        code_metrics['# runtime errors of type : ' + str(type(exc))] += 1
                         pass
                     else:
                         # print("other exception")
                         # print(outputs, transformed)
-                        code_metrics['# executions'] += 1
+                        code_metrics['# completed executions'] += 1
                         pass
                         # print("failed loading")
                 i += 1
@@ -157,9 +163,8 @@ if __name__ == "__main__":
                     response = json.load(open(storage_path + storage_dir + '/{}'.format(response_file)))
 
                     if response['problem'] == problem:
-                        valid, code = verify_response(response,  data["train"])
-                        code_metrics['training_examples_verified'] += valid
-                        code_metrics['training_examples_failed'] += 3 - valid
+                        examples_passed, code = verify_response(response,  data["train"])
+                        # code_metrics['training_examples_verified'] += examples_passed
                         iteration += 1
                         input_tokens += response["usage"]["prompt_tokens"]
                         output_tokens += response["usage"]["completion_tokens"]
@@ -167,20 +172,30 @@ if __name__ == "__main__":
                         # if valid:
                         # print('# code validates examples')
                         # print(code)
-                        test, code = verify_response(response,  data["test"])
-                        code_metrics['test_verified'] += test
-                        if test:
+                        test_passed, code = verify_response(response,  data["test"])
+                        # code_metrics['test_verified'] += test_passed
+                        any_choice_passed_test = sum(test_passed.values())
+
+                        if any_choice_passed_test:
                             # print("# code passes test")
                             passed = True
                             n_passed += 1
-                            categories_passed[category] += 1
+                            # if examples_passed == len(data["train"]):
+                            #     categories_passed[category] += 1
                             # break
+                        
+                        any_choice_passed_test_and_examples = sum([ examples_passed[j] == len(data["train"]) and test_passed[j] for j in range(1, len(test_passed)+1 )])
+
+                        if any_choice_passed_test_and_examples:
+                            code_metrics['# tasks passed'] += 1
                 # print(n, n_passed)
 
         signal.alarm(0)
+        code_metrics['# solved'] = len(solved_tasks)
         print(n_choices, code_metrics)
+        # print(categories_passed)
         code_metrics = defaultdict(int)
-
+        solved_tasks = set()
         # output_tokens = current_choices * output_tokens / max_choices
         # data = pd.DataFrame(categories_passed, index = [storage_dir])
         # data = data.assign(choices = [current_choices])
