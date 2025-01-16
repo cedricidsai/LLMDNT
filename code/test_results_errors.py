@@ -191,19 +191,30 @@ if __name__ == "__main__":
                 # print(n, n_passed)
 
         signal.alarm(0)
-        code_metrics['# solved'] = len(solved_tasks)
-        print(n_choices, code_metrics)
+        # code_metrics['# solved'] = len(solved_tasks)
+
+        code_metrics['# choices'] = n_choices
+        data = pd.DataFrame(code_metrics)
+        saved_data = pd.concat([saved_data, data])
+
+        # print(n_choices, code_metrics)
         # print(categories_passed)
         code_metrics = defaultdict(int)
         solved_tasks = set()
-        # output_tokens = current_choices * output_tokens / max_choices
         # data = pd.DataFrame(categories_passed, index = [storage_dir])
         # data = data.assign(choices = [current_choices])
         # data = data.assign(input_tokens = [input_tokens])
         # data = data.assign(output_tokens = [output_tokens])
         # saved_data = pd.concat([saved_data, data])
 
-    # saved_data.to_csv(storage_path + storage_dir + '.csv')
+        # output_tokens = current_choices * output_tokens / max_choices
+        # data = pd.DataFrame(categories_passed, index = [storage_dir])
+        # data = data.assign(choices = [current_choices])
+        # data = data.assign(input_tokens = [input_tokens])
+        # data = data.assign(output_tokens = [output_tokens])
+        # saved_data = pd.concat([saved_data, data])
+    print(saved_data)
+    saved_data.to_csv(storage_path + storage_dir + '_errors' + '.csv')
 
     # categories_names = "Move 1,Move 2,Move 3,Move Dynamic,Move 2 Towards,Fill,Padded Fill,Hollow,Flip,Mirror,Denoise,Denoise Multicolor,Pattern Copy,Pattern Copy Multicolor,Recolor by Odd Even,Recolor by Size,Recolor by Size Comparison,Scaling".split(',')
     # categories_dirs = "1d_move_1p,1d_move_2p,1d_move_3p,1d_move_dp,1d_move_2p_dp,1d_fill,1d_padded_fill,1d_hollow,1d_flip,1d_mirror,1d_denoising_1c,1d_denoising_mc,1d_pcopy_1c,1d_pcopy_mc,1d_recolor_oe,1d_recolor_cnt,1d_recolor_cmp,1d_scale_dp".split(',')
